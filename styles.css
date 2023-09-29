@@ -35,8 +35,15 @@
     align-content: center;
     justify-items: center;
     align-items: center;
+    gap: 50px;
 }
 
+.player-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
 .game-board {
     display: grid;
     grid-template-columns: repeat(3, 7rem);
