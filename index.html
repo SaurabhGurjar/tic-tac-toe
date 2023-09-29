@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="icons/tic-tac-toe.svg">
     <script src="app.js" defer></script>
     <title>Tic Tac Toe</title>
 </head>
@@ -16,18 +17,21 @@
         </div>
         <div class="main">
             <div class="game-info">
-                <h3 id="heading-text">Winner player</h3>
+                <div class="show-winner-wrapper">
+                    <h3 id="show-winner">Winner</h3>
+                </div>
+                
             </div>
             <div class="game-board">
-                <button class="cell" id="cell-1" data-pos="1"></button>
-                <button class="cell" id="cell-2" data-pos="2"></button>
-                <button class="cell" id="cell-3" data-pos="3"></button>
-                <button class="cell" id="cell-4" data-pos="4"></button>
-                <button class="cell" id="cell-5" data-pos="5"></button>
-                <button class="cell" id="cell-6" data-pos="6"></button>
-                <button class="cell" id="cell-7" data-pos="7"></button>
-                <button class="cell" id="cell-8" data-pos="8"></button>
-                <button class="cell" id="cell-9" data-pos="9"></button>
+                <button class="cell" id="cell-1" data-pos="1" type="button"></button>
+                <button class="cell" id="cell-2" data-pos="2" type="button"></button>
+                <button class="cell" id="cell-3" data-pos="3" type="button"></button>
+                <button class="cell" id="cell-4" data-pos="4" type="button"></button>
+                <button class="cell" id="cell-5" data-pos="5" type="button"></button>
+                <button class="cell" id="cell-6" data-pos="6" type="button"></button>
+                <button class="cell" id="cell-7" data-pos="7" type="button"></button>
+                <button class="cell" id="cell-8" data-pos="8" type="button"></button>
+                <button class="cell" id="cell-9" data-pos="9" type="button"></button>
             </div>
             <div class="player-info">
                 <h3 class="player-marker" id="player-1">Player 1: X</h3>
