@@ -20,8 +20,10 @@
     justify-content: center;
     align-items: center;
     padding: 20px 0;
-
+    width: 100%;
+    background-color: black;
     #game-title {
+        color: #fff;
         font-size: 4em;
         font-weight: 900;
     }
@@ -90,6 +92,11 @@ grid-column: 3 / 4;
     border: none;
     font-size: 44px;
     font-weight: 700;
+    color: black;
+}
+
+.cell:hover:not(:disabled) {
+    background-color: black;
 }
 
 #cell-2,
