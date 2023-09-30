@@ -22,13 +22,13 @@
     padding: 20px 0;
     width: 100%;
     background-color: black;
-    #game-title {
-        color: #fff;
-        font-size: 4em;
-        font-weight: 900;
-    }
 }
 
+#game-title {
+    color: #fff;
+    font-size: 4em;
+    font-weight: 900;
+}
 .main {
     width: 100%;
     display: grid;
