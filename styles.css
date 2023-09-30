@@ -39,11 +39,39 @@
 }
 
 .player-info {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     justify-content: center;
     align-items: center;
     gap: 50px;
 }
+
+#play-again {
+    grid-column: 2 / 3;
+    display: none;
+    padding: 5px 8px;
+    font-size: 19px;
+    font-weight: 700;
+    background: black;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+#player-1 {
+    grid-column: 1 / 2;
+}
+
+#player-2 {
+grid-column: 3 / 4;
+}
+
+.player-turn {
+    background-color: black;
+    color: #fff;
+    padding: 5px 8px;
+}
+
 .game-board {
     display: grid;
     grid-template-columns: repeat(3, 7rem);
