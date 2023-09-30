@@ -45,7 +45,7 @@
     grid-template-columns: repeat(3, 1fr);
     justify-content: center;
     align-items: center;
-    gap: 50px;
+    gap: 10px;
 }
 
 #play-again {
