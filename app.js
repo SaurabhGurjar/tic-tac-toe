@@ -94,10 +94,10 @@ const displayController = (() => {
 
     const showWinner = (player1, player2) => {
         let winner, loser;
-        if(player1.win) {
+        if (player1.win) {
             winner = player1;
             loser = player2;
-        } else if(player2.win) {
+        } else if (player2.win) {
             winner = player2;
             loser = player1;
         }
@@ -139,19 +139,89 @@ const displayController = (() => {
 
 const Player = (marker, name, id, turn, win) => {
     const positions = [];
-    
+
     const setPlayerPos = (pos) => {
         positions.push(pos);
+        positions.sort();
     }
 
     const getPlayerPos = () => {
-       return positions;
+        return positions;
     }
 
-    return { marker, name, id, turn, win, setPlayerPos, getPlayerPos};
+    return { marker, name, id, turn, win, setPlayerPos, getPlayerPos };
 }
 
+// Minimax algorithm 
+// First evaluate the moves 
+// Predict future move using minimax function
+// Find best move
 
+const ai = (() => {
+    const minimax = (board, depth, isMaximize) => {
+        const win = check.winner();
+        if (win === 'X') {
+            return -1;
+        }
+
+        if (win === 'O') {
+            return 1;
+        }
+
+        if (check.tie()) {
+            return 0;
+        }
+
+
+        if (isMaximize) {
+            let best = -Infinity;
+
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === '') {
+                    board[i] = game.player2.marker;
+                    best = Math.max(best, minimax(board, depth + 1, false));
+                    board[i] = '';
+                }
+            }
+            return best;
+        } else {
+            let best = Infinity;
+
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === '') {
+                    board[i] = game.player1.marker;
+                    best = Math.min(best, minimax(board, depth + 1, true));
+                    board[i] = '';
+                }
+            }
+            return best;
+        }
+    };
+
+    const findBestMove = () => {
+        let bestScore = -Infinity;
+        let bestMove;
+        const board = gameboard.getPositions();
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === '') {
+                board[i] = game.player2.marker;
+                const score = minimax(board, 0, false);
+                board[i] = '';
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+        }
+        // console.log(bestMove);
+        return bestMove;
+    };
+
+    return {
+        findBestMove,
+    }
+})();
 
 
 
@@ -175,21 +245,25 @@ const check = (() => {
             }
         }
         if (_count > 2) {
-            if (mark === game.player1.marker) {
-                game.player1.win = true;
-            } else {
-                game.player2.win = true;
-            }
+            return mark;
         }
+        return null;
     }
+
+
 
     const winner = () => {
         const winPatLen = winningPattern.length;
-        for(let i = 0; i < winPatLen; i++) {
-            _winnerCheck(winningPattern[i][0], winningPattern[i][1], winningPattern[i][2]);
+        let win;
+        for (let i = 0; i < winPatLen; i++) {
+            win = _winnerCheck(winningPattern[i][0], winningPattern[i][1], winningPattern[i][2]);
+            if (win !== null) {
+                return win;
+            }
         }
+        return null;
     };
-    
+
     const tie = () => {
         for (const element of _gameBoardArr) {
             if (element === '') return false;
@@ -221,24 +295,36 @@ const game = (() => {
     displayController.switchTurn(player1, player2);
 
     const play = (event) => {
-        const pos = event.target.dataset.pos - 1;
-        gameboard.setPosition(pos, player1, player2);
+        let pos;
+        pos = event.target.dataset.pos - 1;
         if (player1.turn) {
             player1.setPlayerPos(pos);
-        } else if (player2) {
-            player2.setPlayerPos(pos);
+        } else if (player2.turn) {
+            // player2.setPlayerPos(pos);
+            pos = ai.findBestMove();
         }
+
+        // if (player1.turn) {
+        //     pos = ai.findBestMove();
+        //     console.log(pos);
+        // }
+        gameboard.setPosition(pos, player1, player2);
 
         displayController.showMarker(pos);
         _switchTurn();
         displayController.switchTurn(player1, player2);
-        check.winner();
-        if (game.player1.win || game.player2.win) {
+        const win = check.winner();
+        if (win === 'X') {
+            game.player1.win = true;
             displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
-        } else if (check.tie) {
-            displayController.showTie(check.tie(), player1, player2);
+        } else if (win === 'O') {
+            game.player2.win = true;
+            displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
         }
-    }
+
+        displayController.showTie(check.tie(), player1, player2);
+
+    };
 
     const reset = () => {
         gameboard.reset();
@@ -251,6 +337,8 @@ const game = (() => {
         displayController.showTurn(game.player1);
 
     };
+
+
     return {
         player1,
         player2,
@@ -259,11 +347,10 @@ const game = (() => {
     }
 })();
 
-
-
 const eventListener = (() => {
     const _playAgainBtn = document.getElementById('play-again');
     const _boardPos = document.querySelectorAll('.cell');
-    _boardPos.forEach((cell) => cell.addEventListener('click', game.play));
     _playAgainBtn.addEventListener('click', game.reset)
+    _boardPos.forEach((cell) => cell.addEventListener('click', game.play));
 })();
+
