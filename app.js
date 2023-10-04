@@ -1,3 +1,4 @@
+// Game board module contains methods to set, get, reset cells positions
 const gameboard = (() => {
     const _cells = ['', '', '', '', '', '', '', '', ''];
 
@@ -30,7 +31,7 @@ const gameboard = (() => {
 })();
 
 
-
+// Display module contain methods to control UI
 const displayController = (() => {
     const _winnerWrapper = document.getElementById('show-winner');
     const _cells = document.querySelectorAll('.cell');
@@ -137,6 +138,7 @@ const displayController = (() => {
     }
 })();
 
+// Factory function to create players
 const Player = (marker, name, id, turn, win) => {
     const positions = [];
 
@@ -151,6 +153,9 @@ const Player = (marker, name, id, turn, win) => {
 
     return { marker, name, id, turn, win, setPlayerPos, getPlayerPos };
 }
+
+
+// Ai module contains methods to make decision for moves 
 
 // Minimax algorithm 
 // First evaluate the moves 
@@ -227,7 +232,7 @@ const ai = (() => {
 
 
 
-// Game winner check module
+// Check module contains methods to check game winner or tie
 const check = (() => {
     const _gameBoardArr = gameboard.getPositions();
     const winningPattern = [[0, 2, 1], [3, 5, 1], [6, 8, 1], [0, 6, 3], [1, 7, 3], [2, 8, 3], [0, 8, 4], [2, 6, 2]]; // THESE ARE THE START, END POSITION AND DIFFERECE BETWEEN POSITION FOR WINNER CHECK LOOP
@@ -268,6 +273,8 @@ const check = (() => {
         for (const element of _gameBoardArr) {
             if (element === '') return false;
         }
+        game.player1.turn = false;
+        game.player2.turn = false;
         return true;
     };
     return {
@@ -276,8 +283,8 @@ const check = (() => {
     }
 })();
 
+// Game module create two players and contain methods that controls the game flow
 const game = (() => {
-
     const player1 = Player('X', 'Player1', 'player-1', true, false);
     const player2 = Player('O', 'Player2', 'player-2', false, false);
 
@@ -293,21 +300,19 @@ const game = (() => {
 
 
     displayController.switchTurn(player1, player2);
-
-    const play = (event) => {
+    const getPos = (event) => {
         let pos;
-        pos = event.target.dataset.pos - 1;
         if (player1.turn) {
+            pos = event.target.dataset.pos - 1;
             player1.setPlayerPos(pos);
         } else if (player2.turn) {
-            // player2.setPlayerPos(pos);
             pos = ai.findBestMove();
+            player2.setPlayerPos(pos);
         }
 
-        // if (player1.turn) {
-        //     pos = ai.findBestMove();
-        //     console.log(pos);
-        // }
+    };
+
+    const play = (pos) => {
         gameboard.setPosition(pos, player1, player2);
 
         displayController.showMarker(pos);
@@ -315,14 +320,20 @@ const game = (() => {
         displayController.switchTurn(player1, player2);
         const win = check.winner();
         if (win === 'X') {
-            game.player1.win = true;
-            displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
+            player1.win = true;
+            player2.turn = false;
+            displayController.showWinner(player1, player2); // .showWinner(winner, loser)
         } else if (win === 'O') {
-            game.player2.win = true;
-            displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
+            player2.win = true;
+            player1.turn = false;
+            displayController.showWinner(player1, player2); // .showWinner(winner, loser)
         }
 
         displayController.showTie(check.tie(), player1, player2);
+
+        if (player2.turn) {
+            getPos();
+        }
 
     };
 
@@ -344,6 +355,7 @@ const game = (() => {
         player2,
         play,
         reset,
+        getPos,
     }
 })();
 
@@ -351,6 +363,6 @@ const eventListener = (() => {
     const _playAgainBtn = document.getElementById('play-again');
     const _boardPos = document.querySelectorAll('.cell');
     _playAgainBtn.addEventListener('click', game.reset)
-    _boardPos.forEach((cell) => cell.addEventListener('click', game.play));
+    _boardPos.forEach((cell) => cell.addEventListener('click', game.getPos));
 })();
 
