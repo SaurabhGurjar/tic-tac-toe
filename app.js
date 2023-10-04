@@ -268,7 +268,10 @@ const check = (() => {
         for (const element of _gameBoardArr) {
             if (element === '') return false;
         }
+        game.player1.turn = false;
+        game.player2.turn = false;
         return true;
+
     };
     return {
         winner,
@@ -276,10 +279,13 @@ const check = (() => {
     }
 })();
 
+
+
+
 const game = (() => {
 
     const player1 = Player('X', 'Player1', 'player-1', true, false);
-    const player2 = Player('O', 'Player2', 'player-2', false, false);
+    const player2 = Player('O', 'Saurabh', 'player-2', false, false);
 
     const _switchTurn = () => {
         if (player1.turn) {
@@ -294,36 +300,45 @@ const game = (() => {
 
     displayController.switchTurn(player1, player2);
 
-    const play = (event) => {
+    const getPos = (event) => {
         let pos;
-        pos = event.target.dataset.pos - 1;
         if (player1.turn) {
-            player1.setPlayerPos(pos);
+            pos = event.target.dataset.pos - 1;
+            play(pos)
         } else if (player2.turn) {
             // player2.setPlayerPos(pos);
             pos = ai.findBestMove();
+            play(pos)
         }
+    }
 
-        // if (player1.turn) {
-        //     pos = ai.findBestMove();
-        //     console.log(pos);
-        // }
+    const play = (pos) => {
         gameboard.setPosition(pos, player1, player2);
-
         displayController.showMarker(pos);
         _switchTurn();
         displayController.switchTurn(player1, player2);
         const win = check.winner();
         if (win === 'X') {
             game.player1.win = true;
+            game.player2.turn = false;
             displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
         } else if (win === 'O') {
             game.player2.win = true;
+            game.player1.turn = false;
             displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
         }
 
         displayController.showTie(check.tie(), player1, player2);
+        if(player2.turn) {
+            getPos();
+        }
+    };
 
+    const over = () => {
+        if(check.tie() || check.winner() === 'X' || check.winner() === 'O') {
+            return true;
+        }
+        return false;
     };
 
     const reset = () => {
@@ -342,15 +357,19 @@ const game = (() => {
     return {
         player1,
         player2,
-        play,
+        getPos,
+        over,
         reset,
     }
 })();
 
 const eventListener = (() => {
+
     const _playAgainBtn = document.getElementById('play-again');
     const _boardPos = document.querySelectorAll('.cell');
     _playAgainBtn.addEventListener('click', game.reset)
-    _boardPos.forEach((cell) => cell.addEventListener('click', game.play));
+    _boardPos.forEach((cell) => cell.addEventListener('click', (event) => {
+        game.getPos(event); 
+    }));
 })();
 

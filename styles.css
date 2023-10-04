@@ -6,9 +6,82 @@
     box-sizing: border-box;
     font-family: 'Open Sans', sans-serif;
 }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.model {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #000;
+    padding: 20px;
+    z-index: 20;   
+
+    .input-wrapper {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+
+        .name-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .select-opponent {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .opponent-btn {
+                width: 45%;
+                padding: 5px 0;
+            }
+        }
+
+        #play-btn {
+            width: 100%;
+            padding: 8px 0;
+        }
+
+    }
+
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#opponent-name {
+    display: none;
+}
+
+input[type="text"] {
+    padding: 5px;
+}
+
+label {
+    color: #fff;
+}
 
 .container {
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -28,6 +101,10 @@
     color: #fff;
     font-size: 4em;
     font-weight: 900;
+}
+
+.main-container {
+    display: inherit;
 }
 .main {
     width: 100%;
