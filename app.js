@@ -102,7 +102,7 @@ const displayController = (() => {
             winner = player2;
             loser = player1;
         }
-        _winnerWrapper.textContent = `${winner.name} wins the game!`;
+        _winnerWrapper.textContent = `${winner.name} wins!`;
         _disableCells();
         _hideTurnBg(loser);
         showPlayAgainBtn();
@@ -300,6 +300,8 @@ const game = (() => {
 
 
     displayController.switchTurn(player1, player2);
+
+
     const getPos = (event) => {
         let pos;
         if (player1.turn) {
@@ -309,12 +311,12 @@ const game = (() => {
             pos = ai.findBestMove();
             player2.setPlayerPos(pos);
         }
+        play(pos);
 
     };
 
     const play = (pos) => {
         gameboard.setPosition(pos, player1, player2);
-
         displayController.showMarker(pos);
         _switchTurn();
         displayController.switchTurn(player1, player2);
