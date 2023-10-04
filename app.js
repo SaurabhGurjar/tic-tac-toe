@@ -285,8 +285,8 @@ const check = (() => {
 
 // Game module create two players and contain methods that controls the game flow
 const game = (() => {
-    const player1 = Player('X', 'Player1', 'player-1', true, false);
-    const player2 = Player('O', 'Player2', 'player-2', false, false);
+    const player1 = Player('X', 'You', 'player-1', true, false);
+    const player2 = Player('O', 'Ai', 'player-2', false, false);
 
     const _switchTurn = () => {
         if (player1.turn) {

@@ -48,6 +48,9 @@
     gap: 10px;
 }
 
+#play-again-wrapper {
+    width: 110px;
+}
 #play-again {
     grid-column: 2 / 3;
     display: none;
@@ -62,10 +65,12 @@
 
 #player-1 {
     grid-column: 1 / 2;
+    text-align: center;
 }
 
 #player-2 {
 grid-column: 3 / 4;
+text-align: center;
 }
 
 .player-turn {
