@@ -1,3 +1,4 @@
+// Game board module contains methods to set, get, reset cells positions
 const gameboard = (() => {
     const _cells = ['', '', '', '', '', '', '', '', ''];
 
@@ -30,7 +31,7 @@ const gameboard = (() => {
 })();
 
 
-
+// Display module contain methods to control UI
 const displayController = (() => {
     const _winnerWrapper = document.getElementById('show-winner');
     const _cells = document.querySelectorAll('.cell');
@@ -74,11 +75,13 @@ const displayController = (() => {
 
     const _hideTurnBg = (player) => {
         const element = document.getElementById(player.id);
+        console.log(element);
         element.classList.remove('player-turn');
 
     }
 
     const switchTurn = (player1, player2) => {
+        console.log({player1}, {player2});
         if (player1.turn) {
             _showTurnBg(player1);
             _hideTurnBg(player2);
@@ -101,7 +104,7 @@ const displayController = (() => {
             winner = player2;
             loser = player1;
         }
-        _winnerWrapper.textContent = `${winner.name} wins the game!`;
+        _winnerWrapper.textContent = `${winner.name} wins!`;
         _disableCells();
         _hideTurnBg(loser);
         showPlayAgainBtn();
@@ -137,6 +140,7 @@ const displayController = (() => {
     }
 })();
 
+// Factory function to create players
 const Player = (marker, name, id, turn, win) => {
     const positions = [];
 
@@ -151,6 +155,9 @@ const Player = (marker, name, id, turn, win) => {
 
     return { marker, name, id, turn, win, setPlayerPos, getPlayerPos };
 }
+
+
+// Ai module contains methods to make decision for moves 
 
 // Minimax algorithm 
 // First evaluate the moves 
@@ -227,7 +234,7 @@ const ai = (() => {
 
 
 
-// Game winner check module
+// Check module contains methods to check game winner or tie
 const check = (() => {
     const _gameBoardArr = gameboard.getPositions();
     const winningPattern = [[0, 2, 1], [3, 5, 1], [6, 8, 1], [0, 6, 3], [1, 7, 3], [2, 8, 3], [0, 8, 4], [2, 6, 2]]; // THESE ARE THE START, END POSITION AND DIFFERECE BETWEEN POSITION FOR WINNER CHECK LOOP
@@ -271,7 +278,6 @@ const check = (() => {
         game.player1.turn = false;
         game.player2.turn = false;
         return true;
-
     };
     return {
         winner,
@@ -279,13 +285,10 @@ const check = (() => {
     }
 })();
 
-
-
-
+// Game module create two players and contain methods that controls the game flow
 const game = (() => {
-
-    const player1 = Player('X', 'Player1', 'player-1', true, false);
-    const player2 = Player('O', 'Saurabh', 'player-2', false, false);
+    const player1 = Player('X', 'You', 'player-1', true, false);
+    const player2 = Player('O', 'Ai', 'player-2', false, false);
 
     const _switchTurn = () => {
         if (player1.turn) {
@@ -300,17 +303,19 @@ const game = (() => {
 
     displayController.switchTurn(player1, player2);
 
+
     const getPos = (event) => {
         let pos;
         if (player1.turn) {
             pos = event.target.dataset.pos - 1;
-            play(pos)
+            player1.setPlayerPos(pos);
         } else if (player2.turn) {
-            // player2.setPlayerPos(pos);
             pos = ai.findBestMove();
-            play(pos)
+            player2.setPlayerPos(pos);
         }
-    }
+        play(pos);
+
+    };
 
     const play = (pos) => {
         gameboard.setPosition(pos, player1, player2);
@@ -319,26 +324,21 @@ const game = (() => {
         displayController.switchTurn(player1, player2);
         const win = check.winner();
         if (win === 'X') {
-            game.player1.win = true;
-            game.player2.turn = false;
-            displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
+            player1.win = true;
+            player2.turn = false;
+            displayController.showWinner(player1, player2); // .showWinner(winner, loser)
         } else if (win === 'O') {
-            game.player2.win = true;
-            game.player1.turn = false;
-            displayController.showWinner(game.player1, game.player2); // .showWinner(winner, loser)
+            player2.win = true;
+            player1.turn = false;
+            displayController.showWinner(player1, player2); // .showWinner(winner, loser)
         }
 
         displayController.showTie(check.tie(), player1, player2);
-        if(player2.turn) {
+
+        if (player2.turn) {
             getPos();
         }
-    };
 
-    const over = () => {
-        if(check.tie() || check.winner() === 'X' || check.winner() === 'O') {
-            return true;
-        }
-        return false;
     };
 
     const reset = () => {
@@ -357,19 +357,15 @@ const game = (() => {
     return {
         player1,
         player2,
-        getPos,
-        over,
+        play,
         reset,
+        getPos,
     }
 })();
 
 const eventListener = (() => {
-
     const _playAgainBtn = document.getElementById('play-again');
     const _boardPos = document.querySelectorAll('.cell');
     _playAgainBtn.addEventListener('click', game.reset)
-    _boardPos.forEach((cell) => cell.addEventListener('click', (event) => {
-        game.getPos(event); 
-    }));
+    _boardPos.forEach((cell) => cell.addEventListener('click', game.getPos));
 })();
-
